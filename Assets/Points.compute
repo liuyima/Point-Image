@@ -1,0 +1,39 @@
+﻿// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel CSMain
+
+// Create a RenderTexture with enableRandomWrite flag and set it
+// with cs.SetTexture
+RWTexture2D<float4> Result;
+float3 mousePos;
+float3 originPos;
+int init;
+struct Data
+{
+	float3 pos;
+	float3 velocity;
+	float3 uv;
+};
+RWStructuredBuffer<Data> P;
+
+[numthreads(4,4,1)]
+void CSMain (uint3 id : SV_DispatchThreadID)
+{
+	// TODO: insert actual code here!
+	uint f = id.x + id.y * 4 * 32;
+	float3 pos = float3(id.x,id.y,id.z)/2 + originPos;
+	P[f].uv = ((pos - originPos)/128)*2;
+
+	if(init == 0)
+	{
+		P[f].pos = pos;
+	}
+	else
+	{
+		float3 dis = P[f].pos - mousePos;
+		float3 vel = normalize(dis) * clamp(3 - length(dis),0,3);
+		float3 v = normalize(pos - P[f].pos)*0.02;
+		P[f].pos = lerp(P[f].pos,pos,0.08);
+		P[f].velocity = vel;
+		P[f].pos += P[f].velocity;
+	}
+}
