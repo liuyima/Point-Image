@@ -207,7 +207,7 @@ GameObject:
   - component: {fileID: 1553142421}
   - component: {fileID: 1553142417}
   m_Layer: 0
-  m_Name: Cube
+  m_Name: Script
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
