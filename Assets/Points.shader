@@ -35,15 +35,17 @@
             struct vertOUT{
                 float4 pos : SV_POSITION;
                 float3 uv : TEXCOORD0;
+				float3 velocity:TEXCOORD1;
             };
 
             vertOUT vert(vertIN i){
-                vertOUT o;
-                    float3 pos = P[i.id].pos ; //存储点的位置,P buffer中在compute shader以放置了点位置
+				vertOUT o;
+                float3 pos = P[i.id].pos ; //存储点的位置,P buffer中在compute shader以放置了点位置
 
-                    o.pos = float4(pos ,1);//mul(UNITY_MATRIX_VP,float4(pos ,1)); //从世界坐标变换到视平空间
+                o.pos = float4(pos ,1);//mul(UNITY_MATRIX_VP,float4(pos ,1)); //从世界坐标变换到视平空间
 
-                    o.uv = P[i.id].uv; 
+                o.uv = P[i.id].uv; 
+				o.velocity = P[i.id].velocity;
 
                 return o;
             }
@@ -60,6 +62,10 @@
 				os[1].uv = p[0].uv;
 				os[2].uv = p[0].uv;
 				os[3].uv = p[0].uv;
+				os[0].velocity = p[0].velocity;
+				os[1].velocity = p[0].velocity;
+				os[2].velocity = p[0].velocity;
+				os[3].velocity = p[0].velocity;
 
 				triStream.Append(os[0]);
 				triStream.Append(os[1]);
@@ -70,6 +76,7 @@
             fixed4 frag(vertOUT ou):COLOR{
 
                 fixed4 c = tex2D(_MainTex,ou.uv);
+				c+= half4( ou.velocity,0);
                 return c;
 
             }

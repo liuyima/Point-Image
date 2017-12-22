@@ -11,11 +11,13 @@ public class NewBehaviourScript : MonoBehaviour {
     public Material mat;
     int kernel;
     int init = 0;
+    public float radius;
 	// Use this for initialization
 	void Start () {
-        p = new ComputeBuffer(8 * 8 * 32 * 32, 12);
+        p = new ComputeBuffer(4 * 4 * 32 * 32, 36);//算出buffer数量
         kernel = comShader.FindKernel("CSMain");
         comShader.SetBuffer(kernel, "P", p);
+        comShader.SetFloat("radius", radius);
     }
     
     private void OnRenderObject()
@@ -26,12 +28,13 @@ public class NewBehaviourScript : MonoBehaviour {
         mat.SetBuffer("P", p);
 
         comShader.SetVector("mousePos", point.position);
+        comShader.SetFloat("deltaTime", Time.deltaTime);
         comShader.SetVector("originPos", transform.position);
         comShader.SetInt("init", init);
 
         mat.SetPass(0);
 
-        Graphics.DrawProcedural(MeshTopology.Points, 8 * 8 * 32 * 32);
+        Graphics.DrawProcedural(MeshTopology.Points, 4 * 4 * 32 * 32);
         init = 1;
     }
 

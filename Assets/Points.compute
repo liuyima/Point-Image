@@ -6,7 +6,9 @@
 RWTexture2D<float4> Result;
 float3 mousePos;
 float3 originPos;
+float deltaTime;
 int init;
+float radius;
 struct Data
 {
 	float3 pos;
@@ -20,20 +22,24 @@ void CSMain (uint3 id : SV_DispatchThreadID)
 {
 	// TODO: insert actual code here!
 	uint f = id.x + id.y * 4 * 32;
-	float3 pos = float3(id.x,id.y,id.z)/2 + originPos;
-	P[f].uv = ((pos - originPos)/128)*2;
+	float3 pos = float3(id.x,id.y,id.z)/2 + originPos;//计算出原始坐标
+	P[f].uv = ((pos - originPos)/128)*2;//计算出每个点的uv
 
-	if(init == 0)
+	if(init == 0)//初始化点
 	{
-		P[f].pos = pos;
+		P[f].pos = pos ;
+		P[f].velocity = float3(0,0,0);
 	}
 	else
 	{
-		float3 dis = P[f].pos - mousePos;
-		float3 vel = normalize(dis) * clamp(3 - length(dis),0,3);
-		float3 v = normalize(pos - P[f].pos)*0.02;
-		P[f].pos = lerp(P[f].pos,pos,0.08);
-		P[f].velocity = vel;
-		P[f].pos += P[f].velocity;
+		float3 dis = P[f].pos - mousePos;//计算出当前坐标与鼠标点间的向量
+
+		float vel = clamp(radius - length(dis),0.01,radius);//计算出力
+		P[f].velocity += normalize(dis) * vel * deltaTime * 20;//加上力
+
+		P[f].velocity = normalize(P[f].velocity) * clamp((length(P[f].velocity) - deltaTime * 2),0,radius);//限制力的范围，并且加上指向原始点的力
+
+		P[f].pos = pos + P[f].velocity;//根据力计算出坐标
+
 	}
 }
