@@ -2,21 +2,21 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class NewBehaviourScript : MonoBehaviour {
+public class SetPoints : MonoBehaviour {
 
     public ComputeShader comShader;
     public Shader shader;
     public Transform point;
-    ComputeBuffer p;
+    ComputeBuffer dataBuffer;
     public Material mat;
     int kernel;
     int init = 0;
     public float radius;
 	// Use this for initialization
 	void Start () {
-        p = new ComputeBuffer(4 * 4 * 32 * 32, 36);//算出buffer数量
+        dataBuffer = new ComputeBuffer(4 * 4 * 32 * 32, 36);//算出buffer数量
         kernel = comShader.FindKernel("CSMain");
-        comShader.SetBuffer(kernel, "P", p);
+        comShader.SetBuffer(kernel, "dataBuffer", dataBuffer);
         comShader.SetFloat("radius", radius);
     }
     
@@ -25,7 +25,7 @@ public class NewBehaviourScript : MonoBehaviour {
 
         comShader.Dispatch(kernel, 32, 32, 1);
 
-        mat.SetBuffer("P", p);
+        mat.SetBuffer("dataBuffer", dataBuffer);
 
         comShader.SetVector("mousePos", point.position);
         comShader.SetFloat("deltaTime", Time.deltaTime);
@@ -40,7 +40,7 @@ public class NewBehaviourScript : MonoBehaviour {
 
     private void OnDestroy()
     {
-        p.Release();
+        dataBuffer.Release();
     }
 
     // Update is called once per frame

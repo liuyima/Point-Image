@@ -228,6 +228,7 @@ MonoBehaviour:
   shader: {fileID: 4800000, guid: a8fc8c9c65b2f5c4a9868a2eaad61ab5, type: 3}
   point: {fileID: 1750401966}
   mat: {fileID: 2100000, guid: 0edec95fc24a0fe479275f913fdb0455, type: 2}
+  radius: 3
 --- !u!4 &1553142421
 Transform:
   m_ObjectHideFlags: 0
@@ -235,7 +236,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1553142416}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -31.75, y: -30.33, z: 2.18}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}

@@ -15,7 +15,7 @@ struct Data
 	float3 velocity;
 	float3 uv;
 };
-RWStructuredBuffer<Data> P;
+RWStructuredBuffer<Data> dataBuffer;
 
 [numthreads(4,4,1)]
 void CSMain (uint3 id : SV_DispatchThreadID)
@@ -23,23 +23,23 @@ void CSMain (uint3 id : SV_DispatchThreadID)
 	// TODO: insert actual code here!
 	uint f = id.x + id.y * 4 * 32;
 	float3 pos = float3(id.x,id.y,id.z)/2 + originPos;//计算出原始坐标
-	P[f].uv = ((pos - originPos)/128)*2;//计算出每个点的uv
+	dataBuffer[f].uv = ((pos - originPos)/128)*2;//计算出每个点的uv
 
 	if(init == 0)//初始化点
 	{
-		P[f].pos = pos ;
-		P[f].velocity = float3(0,0,0);
+		dataBuffer[f].pos = pos ;
+		dataBuffer[f].velocity = float3(0,0,0);
 	}
 	else
 	{
-		float3 dis = P[f].pos - mousePos;//计算出当前坐标与鼠标点间的向量
+		float3 dis = dataBuffer[f].pos - mousePos;//计算出当前坐标与鼠标点间的向量
 
-		float vel = clamp(radius - length(dis),0.01,radius);//计算出力
-		P[f].velocity += normalize(dis) * vel * deltaTime * 20;//加上力
+		float vel = clamp(radius - length(dis),0.01,radius) * deltaTime * 20;//计算出力
+		dataBuffer[f].velocity += normalize(dis) * vel;//加上力
 
-		P[f].velocity = normalize(P[f].velocity) * clamp((length(P[f].velocity) - deltaTime * 2),0,radius);//限制力的范围，并且加上指向原始点的力
+		dataBuffer[f].velocity = normalize(dataBuffer[f].velocity) * clamp((length(dataBuffer[f].velocity) - deltaTime * 2),0,radius);//限制力的范围，并且加上指向原始点的力
 
-		P[f].pos = pos + P[f].velocity;//根据力计算出坐标
+		dataBuffer[f].pos = pos + dataBuffer[f].velocity;//根据力计算出坐标
 
 	}
 }
