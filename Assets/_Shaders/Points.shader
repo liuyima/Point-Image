@@ -1,6 +1,7 @@
 ﻿Shader "Custom/c_s" {
     Properties {
         _MainTex ("Base (RGB)", 2D) = "white" {} 
+		_Width("每个方形点宽度",FLOAT) = 0.25
     }                                            
                                                  
 
@@ -27,6 +28,7 @@
             StructuredBuffer<Data> dataBuffer;//存有点位置
 
             sampler2D _MainTex;
+			float _Width;
 
             struct vertIN{
                 uint id : SV_VertexID;
@@ -50,14 +52,15 @@
                 return o;
             }
 
+			//将存储的点转为面片
 			[maxvertexcount(4)]
 			void Geom(point vertOUT p[1],inout TriangleStream<vertOUT> triStream)
 			{
 				vertOUT os[4];
-				os[0].pos =  mul(UNITY_MATRIX_VP,p[0].pos + float4(0.1,0.1,0,0));
-				os[1].pos =  mul(UNITY_MATRIX_VP,p[0].pos + float4(-0.1,0.1,0,0));
-				os[2].pos =  mul(UNITY_MATRIX_VP,p[0].pos + float4(0.1,-0.1,0,0));
-				os[3].pos =  mul(UNITY_MATRIX_VP,p[0].pos + float4(-0.1,-0.1,0,0));
+				os[0].pos =  mul(UNITY_MATRIX_VP,p[0].pos + float4(_Width,_Width,0,0));
+				os[1].pos =  mul(UNITY_MATRIX_VP,p[0].pos + float4(-_Width,_Width,0,0));
+				os[2].pos =  mul(UNITY_MATRIX_VP,p[0].pos + float4(_Width,-_Width,0,0));
+				os[3].pos =  mul(UNITY_MATRIX_VP,p[0].pos + float4(-_Width,-_Width,0,0));
 				os[0].uv = p[0].uv;
 				os[1].uv = p[0].uv;
 				os[2].uv = p[0].uv;

@@ -35,6 +35,7 @@ void CSMain (uint3 id : SV_DispatchThreadID)
 		float3 dis = dataBuffer[f].pos - mousePos;//计算出当前坐标与鼠标点间的向量
 
 		float vel = clamp(radius - length(dis),0.01,radius) * deltaTime * 20;//计算出力
+
 		dataBuffer[f].velocity += normalize(dis) * vel;//加上力
 
 		dataBuffer[f].velocity = normalize(dataBuffer[f].velocity) * clamp((length(dataBuffer[f].velocity) - deltaTime * 2),0,radius);//限制力的范围，并且加上指向原始点的力
